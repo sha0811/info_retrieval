@@ -1,4 +1,0 @@
-model: sentence-transformers/all-MiniLM-L6-v2
-embedding_dim: 384
-normalize_embeddings: True
-text_format: title + ' ' + abstract
