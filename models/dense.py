@@ -42,7 +42,10 @@ def main():
     parser = argparse.ArgumentParser(description="Dense retrieval baseline")
     parser.add_argument("--model",   default=DEFAULT_MODEL,
                         help="Model slug (must match a folder in data/embeddings/)")
-    parser.add_argument("--queries", default=DATA_DIR / "queries.parquet")
+    parser.add_argument("--split",   default="held_out", choices=["train", "held_out"],
+                        help="Which query embeddings to use (default: held_out)")
+    parser.add_argument("--queries", default=None,
+                        help="Override queries parquet path (for --no-eval this is unused)")
     parser.add_argument("--corpus",  default=DATA_DIR / "corpus.parquet")
     parser.add_argument("--qrels",   default=DATA_DIR / "qrels.json")
     parser.add_argument("--output",  default=SUBMISSIONS_DIR / "dense.json",
@@ -51,14 +54,20 @@ def main():
     parser.add_argument("--no-eval", action="store_true", help="Skip evaluation")
     args = parser.parse_args()
 
-    model_slug = args.model.replace("/", "_").replace("\\", "_")
-    emb_dir    = EMBEDDINGS_DIR / model_slug
+    QUERY_FILES = {
+        "train":    DATA_DIR / "queries.parquet",
+        "held_out": DATA_DIR / "held_out_queries.parquet",
+    }
 
-    print(f"Loading embeddings from {emb_dir} ...")
-    query_embs, q_ids = load_embeddings(emb_dir / "query_embeddings.npy",
-                                        emb_dir / "query_ids.json")
-    corpus_embs, c_ids = load_embeddings(emb_dir / "corpus_embeddings.npy",
-                                         emb_dir / "corpus_ids.json")
+    model_slug  = args.model.replace("/", "_").replace("\\", "_")
+    model_dir   = EMBEDDINGS_DIR / model_slug
+    queries_dir = model_dir / args.split
+
+    print(f"Loading embeddings from {model_dir} ...")
+    query_embs, q_ids = load_embeddings(queries_dir / "query_embeddings.npy",
+                                        queries_dir / "query_ids.json")
+    corpus_embs, c_ids = load_embeddings(model_dir / "corpus_embeddings.npy",
+                                         model_dir / "corpus_ids.json")
     print(f"  Query  embeddings : {query_embs.shape}")
     print(f"  Corpus embeddings : {corpus_embs.shape}")
 
@@ -66,7 +75,8 @@ def main():
     submission = retrieve(query_embs, corpus_embs, q_ids, c_ids, top_k=args.top_k)
 
     if not args.no_eval:
-        queries = load_queries(args.queries)
+        queries_path = args.queries if args.queries else QUERY_FILES[args.split]
+        queries = load_queries(queries_path)
         qrels   = load_qrels(args.qrels)
         query_domains = dict(zip(queries["doc_id"], queries["domain"]))
         results = evaluate(submission, qrels, ks=[10, 100], query_domains=query_domains)

@@ -63,7 +63,7 @@ def retrieve(queries, bm25, corpus_ids, top_k: int = 100) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="BM25 retrieval baseline")
-    parser.add_argument("--queries", default=DATA_DIR / "queries.parquet")
+    parser.add_argument("--queries", default=DATA_DIR / "held_out_queries.parquet")
     parser.add_argument("--corpus",  default=DATA_DIR / "corpus.parquet")
     parser.add_argument("--qrels",   default=DATA_DIR / "qrels.json")
     parser.add_argument("--output",  default=SUBMISSIONS_DIR / "bm25.json")

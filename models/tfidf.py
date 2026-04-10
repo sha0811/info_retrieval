@@ -52,7 +52,7 @@ def retrieve(queries, corpus, top_k: int = 100) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="TF-IDF retrieval baseline")
-    parser.add_argument("--queries", default=DATA_DIR / "queries.parquet")
+    parser.add_argument("--queries", default=DATA_DIR / "held_out_queries.parquet")
     parser.add_argument("--corpus",  default=DATA_DIR / "corpus.parquet")
     parser.add_argument("--qrels",   default=DATA_DIR / "qrels.json")
     parser.add_argument("--output",  default=SUBMISSIONS_DIR / "tfidf.json")
