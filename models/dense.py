@@ -80,7 +80,7 @@ def main():
         qrels   = load_qrels(args.qrels)
         query_domains = dict(zip(queries["doc_id"], queries["domain"]))
         results = evaluate(submission, qrels, ks=[10, 100], query_domains=query_domains)
-        save_results(results, RESULTS_DIR / "dense.csv")
+        save_results(results, RESULTS_DIR / "dense.csv", hyperparameters={"model": args.model})
 
     os.makedirs(Path(args.output).parent, exist_ok=True)
     with open(args.output, "w") as f:
