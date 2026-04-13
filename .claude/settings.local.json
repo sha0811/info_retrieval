@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -d \"/c/Users/eloib/Perso/Fac/M1/T4/Info retrieval/info_retrieval\"/*/)",
+      "Bash(ls -d \"/c/Users/eloib/Perso/Fac/M1/T4/Info retrieval/info_retrieval/data/embeddings\"/*/)",
+      "Bash(ls -d \"/c/Users/eloib/Perso/Fac/M1/T4/Info retrieval/info_retrieval/data/finetuned_models\"/*/)"
+    ]
+  }
+}
