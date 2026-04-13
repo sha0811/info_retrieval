@@ -200,9 +200,11 @@ def main():
         model, tokenizer = load_specter2(args.model)
         emb_dim = model.config.hidden_size
     else:
-        model    = SentenceTransformer(args.model)
+        device   = "cuda" if torch.cuda.is_available() else "cpu"
+        model    = SentenceTransformer(args.model, device=device)
         emb_dim  = model.get_sentence_embedding_dimension()
     print(f"  Embedding dim: {emb_dim}")
+    print(f"  Device: {next(model.parameters()).device if not is_specter2 else device}")
 
     # Encode queries
     print(f"\nEncoding queries ({args.split}) …")
