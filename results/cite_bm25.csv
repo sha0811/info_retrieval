@@ -1,0 +1,2 @@
+date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,Recall@100,Precision@100,MRR@100,NDCG@100,MAP
+2026-04-14 15:41:48,"split=train, k1=1.5, b=0.75, max_sents=50",0.1754,0.095,0.3025,0.1899,0.368,0.0246,0.313,0.2378,0.1299

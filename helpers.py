@@ -282,4 +282,4 @@ def save_results(results: dict, output_path, hyperparameters: dict = None):
         if not file_exists:
             writer.writeheader()
         writer.writerow(row)
-    print(f"Results saved → {output_path}")
+    print(f"Results saved -> {output_path}")

@@ -88,7 +88,7 @@ def main():
     os.makedirs(Path(args.output).parent, exist_ok=True)
     with open(args.output, "w") as f:
         json.dump(fused, f)
-    print(f"Saved → {args.output}")
+    print(f"Saved -> {args.output}")
 
 
 if __name__ == "__main__":

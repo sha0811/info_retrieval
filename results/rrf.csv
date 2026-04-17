@@ -10,3 +10,7 @@ date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,Recall@100,Precision@
 2026-04-13 22:20:32,"systems=dense_finetuned_small_train+dense_bge_large+dense_e5, k=60",0.5387,0.274,0.756,0.5792,0.845,0.0618,0.7579,0.6527,0.4754
 2026-04-13 22:23:29,"systems=dense_finetuned_small_train+dense_bge_large, k=60",0.54,0.277,0.7178,0.5673,0.8387,0.0621,0.7194,0.6407,0.4664
 2026-04-13 22:23:35,"systems=dense_finetuned_small_train+dense_bge_large, k=60",0.54,0.277,0.7178,0.5673,0.8387,0.0621,0.7194,0.6407,0.4664
+2026-04-14 01:01:49,"systems=cite_context_bge_large_train+dense_bge_large+dense_finetuned_small_train+dense_e5, k=60",0.5433,0.277,0.7515,0.5825,0.8371,0.0609,0.7537,0.6524,0.4783
+2026-04-14 01:04:58,"systems=cite_context_bge_large_train+fullchunk_BAAI_bge-large-en-v1.5_train+dense_finetuned_small_train, k=60",0.5757,0.29,0.7577,0.6018,0.8646,0.0634,0.759,0.6693,0.4964
+2026-04-14 15:44:43,"systems=cite_bm25_train+cite_context_bge_large_train+fullchunk_BAAI_bge-large-en-v1.5_train+dense_finetuned_small_train, k=60",0.5252,0.273,0.6487,0.5232,0.8557,0.0624,0.6528,0.6078,0.4195
+2026-04-14 16:50:37,"systems=cite_context_bge_large_train+fullchunk_BAAI_bge-large-en-v1.5_train+dense_finetuned_small_train, k=60",0.5798,0.292,0.7532,0.6029,0.865,0.0635,0.7545,0.6689,0.4962
