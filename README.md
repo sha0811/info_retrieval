@@ -107,9 +107,3 @@ helpers.py       Shared utilities: load_qrels, load_queries, evaluate, save_resu
 
 ---
 
-## Key Findings
-
-- **Local optimum confirmed**: coordinate ascent + exhaustive signal testing shows 0.7401 is a local maximum on train
-- **Train/held-out gap (~0.03)**: likely due to 88% cite coverage on held-out vs 97% on train, and slight domain overfitting
-- **GPU needed for further gains**: bi-encoder finetuning is infeasible on CPU (15+ hours/epoch for bge-large)
-- **All additional signals tested hurt**: extra dense models (Specter2, SciNCL, BGE-base, E5-base), rank normalization, BM25 variants, PRF, venue matching — all reduced train NDCG
