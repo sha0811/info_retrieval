@@ -1,7 +1,7 @@
 """
-Reciprocal Rank Fusion — combine multiple ranked submission files.
+Reciprocal Rank Fusion this file combines multiple ranked submission files.
 
-RRF score: sum of 1 / (k + rank) across all systems, where rank is 1-indexed.
+RRF score: sum of 1 / (k + rank) across all systems, where we assume that rank is starting by one.
 Documents not present in a system's ranking are ignored (not penalized).
 
 Usage:

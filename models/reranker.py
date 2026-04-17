@@ -35,7 +35,7 @@ def rerank(submission: dict, queries_df, corpus_df, model: CrossEncoder,
     """
     Rerank each query's candidate list using a cross-encoder.
 
-    submission       : {query_id: [doc_id, ...]}  — input ranked list (e.g. top-100 from RRF)
+    submission       : {query_id: [doc_id, ...]}  is an input ranked list (e.g. top-100 from RRF)
     queries_df       : DataFrame with doc_id, title, abstract columns
     corpus_df        : DataFrame with doc_id, title, abstract columns
     model            : CrossEncoder instance

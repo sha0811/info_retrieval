@@ -5,7 +5,7 @@ Citation contexts are sentences that contain citation markers ([1], (Author et a
 The markers themselves are stripped, leaving pure descriptive text about *why* the paper cites.
 
 This gives a query representation that captures the concepts/findings the paper
-builds on — much closer to citation relevance than title+abstract alone.
+builds on. We chose to implement this because it is much closer to citation relevance than title+abstract alone.
 
 Two outputs per query:
   - Individual chunk embeddings (one per citation sentence)  → for max-pooling retrieval

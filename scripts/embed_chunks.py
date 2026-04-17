@@ -5,8 +5,8 @@ For each query paper, extracts body sections (intro, methods, related work, etc.
 from full_text using chunk_meta, then encodes each chunk independently.
 
 Saves:
-  <output>/<model_slug>/<split>/chunk_embeddings.npy   — (total_chunks, emb_dim)
-  <output>/<model_slug>/<split>/chunk_query_ids.json    — list of query_id per chunk row
+  <output>/<model_slug>/<split>/chunk_embeddings.npy   (total_chunks, emb_dim)
+  <output>/<model_slug>/<split>/chunk_query_ids.json    list of query_id per chunk row
 
 Usage:
   python scripts/embed_chunks.py --model BAAI/bge-large-en-v1.5 --split train

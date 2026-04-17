@@ -218,7 +218,7 @@ def main():
     if query_prefix:
         print(f"Using query prefix: {query_prefix!r}")
 
-    # ── Load data ──────────────────────────────────────────────
+    # Load data
     print("Loading data ...")
     queries_df = pd.read_parquet(args.queries)
     corpus_df  = pd.read_parquet(args.corpus)
@@ -234,12 +234,12 @@ def main():
     print(f"  Qrels:   {len(qrels)} queries, {sum(len(v) for v in qrels.values())} total relevant pairs")
     print(f"  Iterations: {args.iterations}  |  Epochs per iteration: {epochs_per_iter}")
 
-    # ── Load model ─────────────────────────────────────────────
+    # Load model
     print(f"\nLoading base model: {args.base_model} ...")
     model = SentenceTransformer(args.base_model)
     print(f"  Embedding dim: {model.get_sentence_embedding_dimension()}")
 
-    # ── Iterative training loop ────────────────────────────────
+    # Iterative training loop
     for iteration in range(args.iterations):
         print(f"\n{'='*60}")
         print(f"ITERATION {iteration + 1} / {args.iterations}")
@@ -283,9 +283,6 @@ def main():
             print(f"  Mined {len(hard_neg_submission)} query candidate lists")
 
     print(f"\nFine-tuned model saved to: {output_dir}")
-    print(f"\nNext steps:")
-    print(f"  1. Embed:    python scripts/embed.py --model {output_dir} --split train")
-    print(f"  2. Evaluate: python models/dense.py --model {output_dir} --split train")
 
 
 if __name__ == "__main__":

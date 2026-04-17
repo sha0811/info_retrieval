@@ -1,11 +1,7 @@
 """
-Cross-encoder reranking on top of best dual-dense model.
+Experiment: cross-encoder reranking grid search (train split only, not integrated into pipeline).
 
-Pipeline:
-1. Bi-encoder retrieves top-200 candidates (dual-dense + domain + cite context)
-2. Cross-encoder reranks top-50 of those
-3. Merge: take CE scores for top-50, bi-encoder scores for rest
-
+Tested CE reranking on top of bi-encoder retrieval, it did not manage to beat our best submission at the time
 Uses finetuned cross-encoder: data/finetuned_models/crossencoder_ms-marco-MiniLM-L-6-v2/
 """
 import json, sys

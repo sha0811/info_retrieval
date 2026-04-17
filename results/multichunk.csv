@@ -1,4 +1,0 @@
-date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,Recall@100,Precision@100,MRR@100,NDCG@100,MAP
-2026-04-13 11:13:51,"model=BAAI/bge-large-en-v1.5, alpha=0.6, split=train",0.5178,0.267,0.7417,0.5592,0.8114,0.0597,0.7432,0.6277,0.4503
-2026-04-13 11:18:41,"model=BAAI/bge-large-en-v1.5, alpha=0.6, split=held_out",0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-2026-04-13 13:40:37,"model=BAAI/bge-large-en-v1.5, alpha=0.6, split=train",0.5178,0.267,0.7417,0.5592,0.8114,0.0597,0.7432,0.6277,0.4503

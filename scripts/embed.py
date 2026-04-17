@@ -64,7 +64,7 @@ def format_text(row: pd.Series, prefix: str = "") -> str:
     return prefix + text
 
 
-# ── SentenceTransformer encoding (standard models) ───────────────────────────
+# SentenceTransformer encoding (standard models)
 
 def encode(model: SentenceTransformer, texts: list, batch_size: int) -> np.ndarray:
     embeddings = model.encode(
@@ -77,7 +77,7 @@ def encode(model: SentenceTransformer, texts: list, batch_size: int) -> np.ndarr
     return embeddings.astype(np.float32)
 
 
-# ── SPECTER2 adapter encoding ─────────────────────────────────────────────────
+# SPECTER2 adapter encoding
 
 def load_specter2(adapter_name: str):
     """Load a SPECTER2 adapter model. Requires the `adapters` package."""
@@ -142,7 +142,7 @@ def encode_specter2(model, tokenizer, texts: list, batch_size: int) -> np.ndarra
     return np.vstack(all_embeddings).astype(np.float32)
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# Main
 
 def main():
     parser = argparse.ArgumentParser(description="Embed queries and corpus")

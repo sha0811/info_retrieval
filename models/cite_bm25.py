@@ -5,8 +5,6 @@ Uses citation sentences from the query paper's full text as BM25 queries against
 the corpus (title + abstract). For each corpus document, the final score is the
 MAX BM25 score across all citation sentences of the query.
 
-Rationale
----------
 Dense embeddings perform semantic matching — they find papers that are topically
 similar to the query. But citation relevance requires a different signal: the cited
 paper's terminology often appears *verbatim* in the citation sentences of the citing
@@ -61,7 +59,7 @@ NUMERIC_PAREN_PAT = re.compile(
     r"\(\d{1,3}(?:[,;]\s*\d{1,3})*\)"
     r"(?=[\s,\.;)(]|$)"
 )
-# Alphanumeric bracket style: [Kar99], [HS18], [KLM89]
+# Alphanumeric bracket style like [Kar99], [HS18] or [KLM89]
 ALPHA_BRACKET_PAT = re.compile(r"\[[A-Z][A-Za-z]{0,5}\d{2,4}(?:,\s*[A-Z][A-Za-z]{0,5}\d{2,4})*\]")
 
 ALL_CITE_PATS = [BRACKET_PAT, PAREN_CITE_PAT, INLINE_CITE_PAT, NUMERIC_PAREN_PAT, ALPHA_BRACKET_PAT]
@@ -75,8 +73,8 @@ def extract_citation_sentences(full_text: str, min_chars: int = 30, max_sents: i
       - Numeric bracket:      [1], [1,2], [1-3]
       - Author-year paren:    (Smith et al., 2020)
       - Author-year inline:   Smith et al. (2020)
-      - Vancouver numeric:    (1), (2,3)          ← previously missed
-      - Alphanumeric bracket: [Kar99], [HS18]     ← previously missed
+      - Vancouver numeric:    (1), (2,3)         
+      - Alphanumeric bracket: [Kar99], [HS18]    
     Consecutive markers on the same sentence are deduplicated.
     Returns sentences sorted longest-first, capped at max_sents.
     """

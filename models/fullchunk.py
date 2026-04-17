@@ -59,7 +59,7 @@ def retrieve(query_embs, corpus_embs, q_ids, c_ids,
     for row_idx, cid in enumerate(c_chunk_doc_ids):
         cid_to_chunk_rows[cid].append(row_idx)
 
-    # Map each corpus chunk row -> corpus index for vectorized max-pooling
+    # Map each corpus chunk row to the corpus index for vectorized max-pooling
     c_chunk_corpus_idx = np.array([cid_to_idx[cid] for cid in c_chunk_doc_ids], dtype=np.int32) \
         if c_chunk_doc_ids else np.array([], dtype=np.int32)
 
@@ -71,19 +71,19 @@ def retrieve(query_embs, corpus_embs, q_ids, c_ids,
 
         q_rows = qid_to_chunk_rows.get(qid, [])
 
-        # Query TA vs corpus chunks → max-pool per corpus doc
+        # Query TA vs corpus chunks, max-pool per corpus doc
         if len(c_chunk_doc_ids) > 0:
             qta_vs_cchunks = query_embs[i] @ c_chunk_embs.T  # (n_corpus_chunks,)
             # Scatter-max: for each corpus doc, take max across its chunks
             np.maximum.at(max_chunk_scores, c_chunk_corpus_idx, qta_vs_cchunks)
 
-        # Query chunks vs corpus TA → max across query chunks per corpus doc
+        # Query chunks vs corpus TA, max across query chunks per corpus doc
         if q_rows:
             qchunks_vs_cta = q_chunk_embs[q_rows] @ corpus_embs.T  # (n_q_chunks, n_corpus)
             q_chunk_max = np.max(qchunks_vs_cta, axis=0)  # (n_corpus,)
             np.maximum(max_chunk_scores, q_chunk_max, out=max_chunk_scores)
 
-        # Query chunks vs corpus chunks → max across all pairs per corpus doc
+        # Query chunks vs corpus chunks, max across all pairs per corpus doc
         if q_rows and len(c_chunk_doc_ids) > 0:
             qchunks_vs_cchunks = q_chunk_embs[q_rows] @ c_chunk_embs.T  # (n_q_chunks, n_c_chunks)
             # Max across query chunks for each corpus chunk

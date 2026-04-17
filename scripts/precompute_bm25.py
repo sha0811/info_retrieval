@@ -1,9 +1,8 @@
 """
 Fast vectorized BM25 using sklearn sparse matrices.
 Builds BM25 on title+abstract+full_text but using C-level sparse ops (sklearn).
-Saves scores for train + held-out queries to disk for reuse.
-
-Expected runtime: ~2-3 minutes (vs 30+ min with rank_bm25 Python loop).
+Saves scores for train + held-out queries to disk for reuse (so that models/pipeline.py can reuse them 
+without recomputing at each run)
 """
 import json, sys
 import numpy as np
@@ -41,10 +40,10 @@ print("Building corpus texts (title+abstract+full_text)...")
 corpus_texts = build_text(corpus, include_fulltext=True)
 print(f"  {len(corpus_texts)} documents")
 
-# ── Vectorized BM25 ───────────────────────────────────────────────────────────
+# Vectorized BM25
 print("Fitting CountVectorizer on corpus...")
 # Use split() tokenizer to match rank_bm25.BM25Okapi behavior exactly
-# (preserves hyphenated terms like "COVID-19", "gene-expression", etc.)
+
 cv = CountVectorizer(
     tokenizer=lambda x: x.lower().split(),
     token_pattern=None,
@@ -80,7 +79,6 @@ def bm25_scores_batch(query_texts):
     # Use: score(q, d) = sum_t in q [ idf[t] * tf_matrix[d,t]*(k1+1) / (tf_matrix[d,t] + norm[d]) ]
 
     # Build weighted TF matrix: wtf[d,t] = tf[d,t]*(k1+1) / (tf[d,t] + norm[d])
-    # This is O(nnz) sparse operation
     tf_coo = tf_matrix.tocoo()
     tf_vals = tf_coo.data.astype(np.float32)
     rows = tf_coo.row
@@ -104,7 +102,7 @@ def bm25_scores_batch(query_texts):
         scores = scores.toarray()
     return np.asarray(scores, dtype=np.float32)
 
-# ── Score train queries ───────────────────────────────────────────────────────
+# Score train queries
 print("\nScoring train queries...")
 queries_df = load_queries(DATA_DIR / "queries.parquet")
 # Queries use title+abstract ONLY (matching retrieve_advanced.py behavior)
@@ -119,7 +117,7 @@ with open(CACHE_DIR / "bm25_train_query_ids.json", "w") as f: json.dump(train_id
 with open(CACHE_DIR / "bm25_corpus_ids.json", "w") as f: json.dump(corpus_ids, f)
 print(f"  Saved train scores -> {CACHE_DIR / 'bm25_train_scores.npy'}")
 
-# ── Score held-out queries ────────────────────────────────────────────────────
+# Score held-out queries
 print("\nScoring held-out queries...")
 held_df = pd.read_parquet(DATA_DIR / "held_out_queries.parquet")
 # Queries use title+abstract ONLY (matching retrieve_advanced.py behavior)
@@ -133,4 +131,4 @@ np.save(CACHE_DIR / "bm25_held_scores.npy", scores_held.astype(np.float32))
 with open(CACHE_DIR / "bm25_held_query_ids.json", "w") as f: json.dump(held_ids, f)
 print(f"  Saved held-out scores -> {CACHE_DIR / 'bm25_held_scores.npy'}")
 
-print("\nDone. BM25 scores cached. Run fusion_v3.py to use them.")
+

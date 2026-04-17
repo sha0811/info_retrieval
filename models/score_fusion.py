@@ -7,15 +7,12 @@ Three signals combined directly in score space (not RRF):
   3. +W_CITE * max_i(cosine(cite_sentence_i, corpus_doc))  (cite-context signal)
 
 Why score-level rather than RRF:
-  RRF equalizes signal contributions by rank; domain and cite signals have
+  RRF equalizes signal contributions by rank where domain and cite signals have
   complementary absolute ranges, so direct score addition outperforms rank fusion.
 
 Best weights found on train split:
   W_DOMAIN = 0.25
   W_CITE   = 1.0
-
-Train NDCG@10: 0.7111  (previous best RRF: 0.6029)
-Codabench:     0.69
 
 Usage:
     python models/score_fusion.py --split train
@@ -100,14 +97,14 @@ def retrieve(
         q_domain = query_domains.get(qid, "")
         cite_rows = qid_to_cite_rows.get(qid, [])
 
-        # 1. Base dense score
+        # We compute Base dense score
         scores = ft_corpus_embs @ q_emb  # shape: (n_corpus,)
 
-        # 2. Domain boost
+        # We add the domain boost
         if w_domain > 0 and q_domain in domain_masks:
             scores = scores + w_domain * domain_masks[q_domain]
 
-        # 3. Cite-context signal (max cosine over all citation sentences)
+        # Cite-context signal (max cosine over all citation sentences)
         if w_cite > 0 and cite_rows:
             q_cite_embs = cite_embs[cite_rows]  # (n_sents, dim)
             # Only score top candidates for efficiency
@@ -141,12 +138,12 @@ def main():
 
     output_path = Path(args.output) if args.output else SUBMISSIONS_DIR / f"score_fusion_{args.split}.json"
 
-    # ── Load corpus ──────────────────────────────────────────────────────────
+    # Load corpus
     print("Loading corpus ...")
     corpus = load_corpus(DATA_DIR / "corpus.parquet")
     corpus_domains = dict(zip(corpus["doc_id"], corpus["domain"].fillna("")))
 
-    # ── Load ft-small embeddings ─────────────────────────────────────────────
+    # Load ft-small embeddings
     print("Loading finetuned bge-small embeddings ...")
     ft_corpus_embs = np.load(EMB_FT / "corpus_embeddings.npy").astype(np.float32)
     with open(EMB_FT / "corpus_ids.json") as f:
@@ -156,7 +153,7 @@ def main():
         ft_query_ids = json.load(f)
     print(f"  Corpus: {ft_corpus_embs.shape}, Queries: {ft_query_embs.shape}")
 
-    # ── Load bge-large cite-context embeddings ───────────────────────────────
+    # Load bge-large cite-context embeddings
     print("Loading bge-large cite-context embeddings ...")
     cite_embs = np.load(EMB_BGE / f"{args.split}/cite_context_embeddings.npy").astype(np.float32)
     with open(EMB_BGE / f"{args.split}/cite_context_query_ids.json") as f:
@@ -167,11 +164,11 @@ def main():
     print(f"  Cite-context: {cite_embs.shape} ({len(set(cite_qids))} queries with contexts)")
     print(f"  BGE corpus:   {bge_corpus_embs.shape}")
 
-    # ── Load query metadata ──────────────────────────────────────────────────
+    # Load query metadata
     queries_df = load_queries(QUERY_FILES[args.split])
     query_domains = dict(zip(queries_df["doc_id"], queries_df["domain"].fillna("")))
 
-    # ── Retrieve ─────────────────────────────────────────────────────────────
+    # Retrieve
     print(f"\nRetrieving (w_domain={args.w_domain}, w_cite={args.w_cite}) ...")
     submission = retrieve(
         ft_corpus_embs, ft_corpus_ids,
@@ -185,7 +182,7 @@ def main():
         top_k=args.top_k,
     )
 
-    # ── Evaluate ─────────────────────────────────────────────────────────────
+    # Evaluate
     if not args.no_eval and args.split == "train":
         qrels = load_qrels(DATA_DIR / "qrels.json")
         results = evaluate(submission, qrels, ks=[10, 100], query_domains=query_domains)
@@ -195,7 +192,7 @@ def main():
             hyperparameters={"w_domain": args.w_domain, "w_cite": args.w_cite, "split": args.split},
         )
 
-    # ── Save ─────────────────────────────────────────────────────────────────
+    # Save
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(submission, f)
