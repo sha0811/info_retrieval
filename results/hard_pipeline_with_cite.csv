@@ -1,0 +1,5 @@
+date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,MAP
+2026-04-21 15:26:07,"w_bc=0.5, w_ec=0.2, w_cc=0.05, dom_k=90, cand_n=200, top_k=100, split=train, swept=False",0.6515,0.322,0.8903,0.7304,0.6384
+2026-04-21 15:26:15,"w_bc=0.5, w_ec=0.2, w_cc=0.05, dom_k=90, cand_n=200, top_k=100, split=train, swept=False",0.6515,0.322,0.8903,0.7304,0.6384
+2026-04-21 15:26:33,"w_bc=0.5, w_ec=0.2, w_cc=0.05, dom_k=90, cand_n=200, top_k=100, split=train, swept=False",0.6515,0.322,0.8903,0.7304,0.6384
+2026-04-21 15:30:37,"w_bc=0.22, w_ec=0.0, w_cc=0.0, dom_k=80, cand_n=100, top_k=100, split=train, swept=False",0.7036,0.347,0.8952,0.7552,0.6554

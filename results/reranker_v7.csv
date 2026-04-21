@@ -1,0 +1,2 @@
+date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,MAP
+2026-04-21 15:50:28,"w_bc=0.44, w_ce=0.04, w_soft=0.25, rr_pow=1.0, dom_k=80, cand_n=100, top_k=100, split=train, grid=False",0.7074,0.351,0.8951,0.7603,0.661

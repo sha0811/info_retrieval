@@ -1,0 +1,7 @@
+Computing soft pipeline scores for split=train...
+  PROGRESS 20.0%  q=20/100
+  PROGRESS 40.0%  q=40/100
+  PROGRESS 60.0%  q=60/100
+  PROGRESS 80.0%  q=80/100
+  PROGRESS 100.0%  q=100/100
+Saved soft scores in 27.8s to C:\Users\eloib\Perso\Fac\M1\T4\Info retrieval\global_project\info_retrieval\data\soft_scores\soft_scores_train.npz

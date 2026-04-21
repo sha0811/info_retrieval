@@ -1,0 +1,8 @@
+Loaded CE cache C:\Users\eloib\Perso\Fac\M1\T4\Info retrieval\global_project\info_retrieval\data\ce_cache\ce_scores_train_BAAI_bge-reranker-base_ta.npz
+Loaded soft scores (20000, 100)
+Saved -> C:\Users\eloib\Perso\Fac\M1\T4\Info retrieval\global_project\info_retrieval\submissions\reranker_v7_train.json
+  PROGRESS 41.0%  q=41/100  elapsed=1212s  eta=1745s
+  PROGRESS 46.0%  q=46/100  elapsed=1350s  eta=1584s
+  PROGRESS 51.0%  q=51/100  elapsed=1488s  eta=1430s
+  PROGRESS 56.0%  q=56/100  elapsed=1625s  eta=1277s
+  PROGRESS 61.0%  q=61/100  elapsed=1765s  eta=1129s

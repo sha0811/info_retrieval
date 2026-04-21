@@ -1,0 +1,2 @@
+date,hyperparameters,Recall@10,Precision@10,MRR@10,NDCG@10,MAP
+2026-04-21 15:24:12,"w_minilm=0.0919, w_bge=0.0609, w_bm25_body=0.0839, w_tfidf_ta=0.045, w_tfidf_ft=0.1209, w_gte_mb_ft=0.5385, w_gte_cmaxsim=0.0589, dom_k=90, top_k=100, weight_source=competitor_best, split=train",0.6811,0.342,0.8774,0.7377,0.6474
