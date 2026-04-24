@@ -66,7 +66,7 @@ info_retrieval/
 │   ├── pipeline.py              Soft 8-signal weighted-sum pipeline (0.7401)
 │   ├── hard_domain_retrieval.py 7-signal hard-domain pipeline, Stage 1 alone (0.7377)
 │   ├── hard_pipeline_with_cite.py Stage 1 + cite-context re-ranking (0.7552)
-│   ├── reranker_v7.py           Final 4-feature reranker — best model (0.7603)
+│   ├── reranker_v7.py           Final 4-feature reranker : best model (0.7603)
 │   ├── dense.py                 Standalone bi-encoder dense retriever
 │   ├── bm25.py                  BM25 retriever (slow; use precompute_bm25.py for the pipeline)
 │   ├── tfidf.py                 TF-IDF baseline
@@ -191,6 +191,6 @@ All model scripts also call `helpers.save_results()` which appends a row to `res
 
 **Why hard-domain filtering?** 97.6% of gold citations share the query's domain. Restricting candidates to the same domain then filling with global results cleans up the candidate pool significantly.
 
-**Why citation sentences?** The sentences in a query paper that *mention* citations describe precisely what the cited paper is about — they are far more specific than the query's title or abstract alone.
+**Why citation sentences?** The sentences in a query paper that *mention* citations describe precisely what the cited paper is about, they are far more specific than the query's title or abstract alone.
 
 **Why the 4-feature reranker?** Cross-encoder (CE) and soft-pipeline scores each add only ~+0.001 in isolation, but when combined with a re-tuned cite weight and reciprocal-rank base they interact super-additively, unlocking a broad plateau around 0.760.
