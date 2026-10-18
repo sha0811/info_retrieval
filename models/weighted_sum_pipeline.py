@@ -1,16 +1,15 @@
 """
-Full retrieval pipeline, best configuration for now
+Weighted-sum retrieval pipeline (train NDCG@10 = 0.7401)
 
 Signals combined in score space:
   0.5  * cosine(ft_small_query,  ft_small_doc)       (finetuned bge-small)
   0.5  * cosine(bge_large_query, bge_large_doc)       (bge-large-en-v1.5)
   0.35 * mm(BM25)^1.2                                 (BM25 with power scaling)
-  0.38 * (query_domain == doc_domain)                 (hard domain boost)
+  0.38 * (query_domain == doc_domain)                 (soft domain boost)
   0.15 * cosine(pooled_cite_bge, bge_large_doc)       (pooled citation context)
   0.95 * max_i cosine(cite_bge_i, bge_large_doc)      (per-cite bge max)
   0.35 * max_i cosine(cite_e5_i,  e5_large_doc)       (per-cite e5 max)
   0.07 * max_i cosine(cite_bge_i, bge_chunk_doc)      (chunk-level cite signal)
-(The actual fully detailed pipeline is on the presentation slides)
 
 Usage:
     python models/weighted_sum_pipeline.py --split train

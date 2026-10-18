@@ -22,6 +22,10 @@ Pipeline:
      bge_chunks are BGE embeddings of the document's body chunks.
 
 Usage:
+    # Reported configuration (train NDCG@10 = 0.7552)
+    python models/domain_retrieval_cite.py --split train --w-bc 0.22 --w-ec 0 --w-cc 0 --dom-k 80 --cand-n 100
+
+    # Default arguments (w_bc=0.5, w_ec=0.2, w_cc=0.05, dom_k=90, cand_n=200): 0.7304
     python models/domain_retrieval_cite.py --split train
     python models/domain_retrieval_cite.py --split train --sweep
     python models/domain_retrieval_cite.py --split held_out --w-bc 0.5 --w-ec 0.2 --w-cc 0.05 --zip
@@ -53,7 +57,7 @@ EMB_MINI = EMB_DIR / "sentence-transformers_all-MiniLM-L6-v2"
 EMB_GMB  = EMB_DIR / "gte_modernbert_fulltext_8k"
 EMB_GTEL = EMB_DIR / "gte_large_chunks"
 
-PROGRESS_FILE = Path(__file__).parent / "hard_cite_progress.txt"
+PROGRESS_FILE = Path(__file__).parent / "domain_retrieval_cite_progress.txt"
 
 # Best 7-signal weights from prior Dirichlet search
 SIG_W_MAP = {"minilm": 0.074, "bge": 0.0, "bm25_body": 0.07,

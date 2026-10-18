@@ -1,5 +1,5 @@
 """
-Full-chunk retrieval — use body chunks on BOTH query and corpus sides.
+Chunk MaxSim retrieval — use body chunks on BOTH query and corpus sides.
 
 For each (query, corpus_doc) pair, computes similarity across all combinations
 of representations (title+abstract and body chunks) and takes the max.

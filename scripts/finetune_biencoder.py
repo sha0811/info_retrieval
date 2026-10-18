@@ -10,6 +10,7 @@ those as harder negatives for the next iteration.
 
 Usage:
   python scripts/finetune_biencoder.py
+  python scripts/finetune_biencoder.py --base-model BAAI/bge-small-en-v1.5   # model used by the pipelines
   python scripts/finetune_biencoder.py --base-model BAAI/bge-large-en-v1.5 --epochs 3
   python scripts/finetune_biencoder.py --hard-negatives submissions/dense_bge_large.json --n-negatives 10
   python scripts/finetune_biencoder.py --iterations 3 --epochs-per-iter 2

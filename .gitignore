@@ -13,3 +13,5 @@ submissions/*
 !submissions/final_reranker_held_out.json
 !submissions/weighted_sum_pipeline_train.json
 !submissions/weighted_sum_pipeline_held_out.json
+
+scripts/error_analysis_domain_retrieval.py

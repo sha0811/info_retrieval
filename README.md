@@ -5,7 +5,7 @@ Academic citation retrieval competition (Codabench). Given a query paper, retrie
 - **Metric**: NDCG@10
 - **Corpus**: 20,000 documents
 - **Queries**: 100 train (with ground-truth qrels) + 100 held-out (scored on Codabench)
-- **Best train score**: 0.7603 (final reranker)
+- **Best score**: 0.7603 train / 0.7509 held-out (final reranker)
 
 ---
 
@@ -51,14 +51,14 @@ The final pipeline is a two-stage system:
 
 ### Score progression
 
-| Model | Train NDCG@10 | Description |
-|-------|---------------|-------------|
-| TF-IDF baseline | 0.4841 | Lexical bag-of-words |
-| Dense (MiniLM) | 0.5073 | Single bi-encoder |
-| Dense (BGE-large) | 0.6776 | Stronger encoder |
-| Weighted-sum ("soft") pipeline | **0.7401** | 8-signal weighted sum, domain match as a soft boost |
-| Domain-filtered pipeline + cite | **0.7552** | Hard-domain filter + cite re-ranking |
-| Final reranker | **0.7603** | Joint 4-feature reranker on top of Stage 1 |
+| Model | Train NDCG@10 | Held-out NDCG@10 | Description |
+|-------|---------------|------------------|-------------|
+| TF-IDF baseline | 0.4841 | – | Lexical bag-of-words |
+| Dense (MiniLM) | 0.5073 | – | Single bi-encoder |
+| Dense (BGE-large) | 0.6776 | – | Stronger encoder |
+| Weighted-sum ("soft") pipeline | **0.7401** | ~0.71 | 8-signal weighted sum, domain match as a soft boost |
+| Domain-filtered pipeline + cite | **0.7552** | – | Hard-domain filter + cite re-ranking |
+| Final reranker | **0.7603** | **0.7509** | Joint 4-feature reranker on top of Stage 1 |
 
 Full progression and approaches that did not help: [`results/README.md`](results/README.md).
 
@@ -92,11 +92,11 @@ info_retrieval/
 │   ├── embed_gte_modernbert_fulltext_8k.py  Embed corpus/queries with GTE-ModernBERT at 8192 tokens (GPU)
 │   ├── embed_gte_large_chunks.py            Embed corpus chunks with GTE-large (cMaxSim signal)
 │   ├── embed_gte_modernbert.py              Alternative GTE-ModernBERT embedding (standard context)
-│   ├── precompute_bm25.py                   Precompute and cache BM25 score matrices
+│   ├── precompute_bm25.py                   Precompute and cache BM25 score matrices (title+abstract)
+│   ├── precompute_sparse_signals.py         Precompute BM25-body and TF-IDF caches used by Stage 1
 │   ├── compute_weighted_sum_scores.py       Compute and cache the weighted-sum pipeline score matrix (used by final_reranker)
 │   ├── compute_ce_scores.py                 Build CE score cache with BAAI/bge-reranker-base
 │   ├── finetune_biencoder.py                Fine-tune BGE-small on (query, gold) pairs with hard negatives
-│   ├── error_analysis_domain_retrieval.py   Per-query NDCG breakdown and oracle-reorder headroom
 │   └── error_analysis_weighted_sum.py       Error analysis from the weighted-sum pipeline era (weak domain diagnostics)
 │
 ├── tuning/                                  Hyperparameter search scripts
@@ -131,8 +131,11 @@ info_retrieval/
 ### 1. Pre-compute all caches (one-time, GPU recommended)
 
 ```bash
-# BM25 and TF-IDF
+# BM25 on title+abstract (weighted-sum pipeline)
 python scripts/precompute_bm25.py
+
+# BM25 on body text + TF-IDF title+abstract / full text (Stage 1)
+python scripts/precompute_sparse_signals.py
 
 # Dense embeddings
 python scripts/embed.py --model BAAI/bge-large-en-v1.5 --split train
@@ -156,9 +159,10 @@ python scripts/embed_gte_modernbert_fulltext_8k.py
 python scripts/embed_gte_large_chunks.py
 
 # Domain-finetuned BGE-small
-python scripts/finetune_biencoder.py
-python scripts/embed.py --model data/finetuned_models/bge-small-finetuned --split train
-python scripts/embed.py --model data/finetuned_models/bge-small-finetuned --split held_out
+python models/dense.py --split train --model BAAI/bge-large-en-v1.5 --output submissions/dense_bge_large.json   # hard negatives
+python scripts/finetune_biencoder.py --base-model BAAI/bge-small-en-v1.5
+python scripts/embed.py --model data/finetuned_models/BAAI_bge-small-en-v1.5 --split train
+python scripts/embed.py --model data/finetuned_models/BAAI_bge-small-en-v1.5 --split held_out
 
 # Weighted-sum pipeline and CE feature caches (needed by final_reranker)
 python scripts/compute_weighted_sum_scores.py --split train
@@ -183,6 +187,17 @@ python models/final_reranker.py --split held_out
 ```bash
 python models/weighted_sum_pipeline.py --split train
 python models/weighted_sum_pipeline.py --split held_out
+```
+
+### 4. Run Stage 1 alone (optional)
+
+```bash
+# Domain-filtered 7-signal retrieval (0.7377)
+python models/domain_retrieval.py --split train
+
+# + citation-context re-scoring (0.7552). These flags reproduce the reported score;
+# the script's default arguments give 0.7304.
+python models/domain_retrieval_cite.py --split train --w-bc 0.22 --w-ec 0 --w-cc 0 --dom-k 80 --cand-n 100
 ```
 
 ---

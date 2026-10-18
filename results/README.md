@@ -19,8 +19,9 @@ All scores are **NDCG@10 on the 100 train queries**. Held-out queries have no pu
 | Submission | Held-out NDCG@10 |
 |------------|------------------|
 | Weighted-sum pipeline | ~0.71 |
+| **Final reranker** | **0.7509** |
 
-The train → held-out gap (~0.03) comes mainly from two things: weights were selected on train, and only 88% of held-out queries have extractable citation sentences (97% on train), so 12 queries get no citation-context signal.
+The final reranker loses only ~0.01 between train and held-out (0.7603 → 0.7509). The weighted-sum pipeline lost ~0.03 (0.7401 → ~0.71), mainly because its weights were tuned on train and it leans heavily on citation contexts: only 88% of held-out queries have extractable citation sentences (97% on train), so 12 queries get no citation-context signal.
 
 ## What did not help
 
@@ -31,7 +32,7 @@ Measured against the weighted-sum pipeline (0.7401) unless stated otherwise:
 - **Other metadata and lexical signals** (same-venue boost, TF-IDF title similarity, dense pseudo-relevance feedback): all slightly below the baseline.
 - **Rank fusion** (RRF over diverse configurations, `models/rrf.py`): 0.712–0.734, below the score-space weighted sum.
 - **Larger first-stage pool** (10,000 instead of 1,000 candidates): no change; the pool was not the bottleneck.
-- **Cross-encoder as the sole ranker** (MiniLM, `bge-reranker-base`): 0.27–0.45 on its own. It only became useful as one feature among four in final reranker.
+- **Cross-encoder as the sole ranker** (MiniLM, `bge-reranker-base`, reranking a dense or RRF list): 0.27–0.55 on its own (`reranker.csv`). It only became useful as one feature among four in the final reranker.
 
 ## CSV logs
 
@@ -41,6 +42,8 @@ Every model script appends one row per run to `results/<model>.csv` via `helpers
 |------|-------|
 | `tfidf.csv`, `bm25.csv`, `dense.csv` | Baselines |
 | `weighted_sum_pipeline.csv`, `score_fusion.csv`, `rrf.csv` | Weighted-sum pipeline and fusion variants |
-| `cite_context.csv`, `cite_bm25.csv`, `chunk_maxsim.csv` | Citation-context and body-chunk retrievers |
+| `cite_context.csv`, `chunk_maxsim.csv` | Citation-context and body-chunk retrievers |
+| `cite_bm25.csv` | BM25 with citation sentences as queries (script removed) |
 | `domain_retrieval.csv`, `domain_retrieval_cite.csv` | Stage 1 |
-| `reranker.csv`, `final_reranker.csv` | Stage 2 rerankers |
+| `final_reranker.csv` | Stage 2 (final reranker) |
+| `reranker.csv` | Early cross-encoder-only reranking experiments (script removed) |
