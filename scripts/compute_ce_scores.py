@@ -4,12 +4,12 @@ Cross-encoder reranking on hard-domain candidates.
 Computes and caches CE scores for (query, candidate) pairs produced by the
 hard-domain 7-signal retrieval. Caches to data/ce_cache/.
 
-Primarily a cache-builder: the resulting .npz feeds the v7 reranker.
+Primarily a cache-builder: the resulting .npz feeds the final reranker.
 The sweep section is kept for the experimental log.
 
 Usage:
-    python scripts/crossencoder_rerank_v2.py --split train --model BAAI/bge-reranker-base
-    python scripts/crossencoder_rerank_v2.py --split held_out --model BAAI/bge-reranker-base
+    python scripts/compute_ce_scores.py --split train --model BAAI/bge-reranker-base
+    python scripts/compute_ce_scores.py --split held_out --model BAAI/bge-reranker-base
 """
 import argparse
 import sys
@@ -21,13 +21,13 @@ import numpy as np
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from helpers import load_qrels, load_corpus, load_queries
-from models.hard_pipeline_with_cite import load_signals_plus_cite, _fast_eval
-from scripts.compute_soft_scores import get_candidates
+from models.domain_retrieval_cite import load_signals_plus_cite, _fast_eval
+from scripts.compute_weighted_sum_scores import get_candidates
 
 DATA_DIR = ROOT / "data"
 CACHE    = DATA_DIR / "ce_cache"
 CACHE.mkdir(exist_ok=True)
-PROGRESS = Path(__file__).parent / "crossencoder_rerank_v2_progress.txt"
+PROGRESS = Path(__file__).parent / "compute_ce_scores_progress.txt"
 
 
 def log(msg):

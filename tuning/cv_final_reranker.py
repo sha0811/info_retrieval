@@ -1,5 +1,5 @@
 """
-5-fold CV for reranker v7 to check overfitting of the 0.7603 config.
+5-fold CV for final reranker to check overfitting of the 0.7603 config.
 
 Best config from full-train grid: rr^1.0, w_bc=0.44, w_ce=0.04, w_soft=0.25 → 0.7603
 
@@ -12,7 +12,7 @@ If the global config generalises at least as well as the per-fold best, the
 0.7603 gain is not overfitting.
 
 Usage:
-    python tuning/cv_rerank_v7.py
+    python tuning/cv_final_reranker.py
 """
 import sys
 from pathlib import Path
@@ -22,13 +22,13 @@ import numpy as np
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from helpers import load_qrels
-from models.hard_pipeline_with_cite import load_signals_plus_cite, _fast_eval, _ndcg10
-from models.reranker_v7 import rerank
-from scripts.compute_soft_scores import compute_soft_scores, get_candidates
+from models.domain_retrieval_cite import load_signals_plus_cite, _fast_eval, _ndcg10
+from models.final_reranker import rerank
+from scripts.compute_weighted_sum_scores import compute_soft_scores, get_candidates
 
 DATA_DIR = ROOT / "data"
 CE_CACHE = DATA_DIR / "ce_cache"
-PROGRESS = Path(__file__).parent / "cv_rerank_v7_progress.txt"
+PROGRESS = Path(__file__).parent / "cv_final_reranker_progress.txt"
 
 
 def log(msg):

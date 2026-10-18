@@ -36,7 +36,7 @@ print(f"Device: {device}", flush=True)
 if device == "cuda":
     print(f"GPU: {torch.cuda.get_device_name(0)}", flush=True)
 
-PROGRESS_FILE = Path(__file__).parent / "embed_gte_ft_8k_progress.txt"
+PROGRESS_FILE = Path(__file__).parent / "embed_gte_modernbert_fulltext_8k_progress.txt"
 
 def log_progress(msg):
     print(msg, flush=True)

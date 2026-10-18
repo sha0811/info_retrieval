@@ -15,9 +15,9 @@ Same start as the winning competitors solution, a
 Dirichlet search (--dirichlet N) re-tunes the weights.
 
 Usage:
-    python models/hard_domain_retrieval.py --split train
-    python models/hard_domain_retrieval.py --split train --dirichlet 5000
-    python models/hard_domain_retrieval.py --split held_out --zip
+    python models/domain_retrieval.py --split train
+    python models/domain_retrieval.py --split train --dirichlet 5000
+    python models/domain_retrieval.py --split held_out --zip
 """
 
 import argparse
@@ -354,9 +354,9 @@ def main():
         hp = {f"w_{s}": round(float(weights[i]), 4) for i, s in enumerate(sig_names)}
         hp.update({"dom_k": args.dom_k, "top_k": args.top_k,
                    "weight_source": weight_source, "split": args.split})
-        save_results(results, RESULTS_DIR / "hard_domain_retrieval.csv", hyperparameters=hp)
+        save_results(results, RESULTS_DIR / "domain_retrieval.csv", hyperparameters=hp)
 
-    name = args.output or f"hard_domain_retrieval_{args.split}"
+    name = args.output or f"domain_retrieval_{args.split}"
     out_path = SUBMISSIONS_DIR / (name if name.endswith(".json") else f"{name}.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

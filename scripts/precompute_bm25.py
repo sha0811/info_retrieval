@@ -1,7 +1,7 @@
 """
 Fast vectorized BM25 using sklearn sparse matrices.
 Builds BM25 on title+abstract+full_text but using C-level sparse ops (sklearn).
-Saves scores for train + held-out queries to disk for reuse (so that models/pipeline.py can reuse them 
+Saves scores for train + held-out queries to disk for reuse (so that models/weighted_sum_pipeline.py can reuse them 
 without recomputing at each run)
 """
 import json, sys

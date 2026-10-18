@@ -1,7 +1,7 @@
 """
 Hard-domain 7-signal pipeline + cite-context re-ranking on top candidates.
 
-The previous pipeline (hard_domain_retrieval.py) reaches around 0.74 without cite-context. This model adds
+The previous pipeline (domain_retrieval.py) reaches around 0.74 without cite-context. This model adds
 cite-context re-scoring on the hard-domain candidate pool (0.7552 on train).
 
 Pipeline:
@@ -22,9 +22,9 @@ Pipeline:
      bge_chunks are BGE embeddings of the document's body chunks.
 
 Usage:
-    python models/hard_pipeline_with_cite.py --split train
-    python models/hard_pipeline_with_cite.py --split train --sweep
-    python models/hard_pipeline_with_cite.py --split held_out --w-bc 0.5 --w-ec 0.2 --w-cc 0.05 --zip
+    python models/domain_retrieval_cite.py --split train
+    python models/domain_retrieval_cite.py --split train --sweep
+    python models/domain_retrieval_cite.py --split held_out --w-bc 0.5 --w-ec 0.2 --w-cc 0.05 --zip
 """
 
 import argparse
@@ -355,7 +355,7 @@ def main():
         qrels = load_qrels(DATA_DIR / "qrels.json")
         results = evaluate(submission, qrels, ks=[10], query_domains=qdmap, verbose=True)
         save_results(
-            results, RESULTS_DIR / "hard_pipeline_with_cite.csv",
+            results, RESULTS_DIR / "domain_retrieval_cite.csv",
             hyperparameters={
                 "w_bc": w_bc, "w_ec": w_ec, "w_cc": w_cc,
                 "dom_k": args.dom_k, "cand_n": args.cand_n, "top_k": args.top_k,
@@ -363,7 +363,7 @@ def main():
             },
         )
 
-    name = args.output or f"hard_pipeline_with_cite_{args.split}"
+    name = args.output or f"domain_retrieval_cite_{args.split}"
     out_path = SUBMISSIONS_DIR / (name if name.endswith(".json") else f"{name}.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

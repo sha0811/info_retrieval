@@ -11,9 +11,9 @@ Where q_repr includes query TA + query body chunks,
 and   c_repr includes corpus TA + corpus body chunks.
 
 Usage:
-    python models/fullchunk.py --model BAAI/bge-large-en-v1.5
-    python models/fullchunk.py --model BAAI/bge-large-en-v1.5 --alpha 0.4
-    python models/fullchunk.py --model BAAI/bge-large-en-v1.5 --alpha 0.5 --split train
+    python models/chunk_maxsim.py --model BAAI/bge-large-en-v1.5
+    python models/chunk_maxsim.py --model BAAI/bge-large-en-v1.5 --alpha 0.4
+    python models/chunk_maxsim.py --model BAAI/bge-large-en-v1.5 --alpha 0.5 --split train
 """
 
 import argparse
@@ -120,7 +120,7 @@ def main():
     model_slug  = args.model.replace("/", "_").replace("\\", "_")
     model_dir   = EMBEDDINGS_DIR / model_slug
     queries_dir = model_dir / args.split
-    output_path = args.output or SUBMISSIONS_DIR / f"fullchunk_{model_slug}_{args.split}.json"
+    output_path = args.output or SUBMISSIONS_DIR / f"chunk_maxsim_{model_slug}_{args.split}.json"
 
     # Load TA embeddings
     print(f"Loading TA embeddings ...")
@@ -173,7 +173,7 @@ def main():
         qrels   = load_qrels(args.qrels)
         query_domains = dict(zip(queries["doc_id"], queries["domain"]))
         results = evaluate(submission, qrels, ks=[10, 100], query_domains=query_domains)
-        save_results(results, RESULTS_DIR / "fullchunk.csv",
+        save_results(results, RESULTS_DIR / "chunk_maxsim.csv",
                      hyperparameters={"model": args.model, "alpha": args.alpha,
                                       "split": args.split})
 

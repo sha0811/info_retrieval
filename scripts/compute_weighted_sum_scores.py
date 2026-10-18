@@ -1,15 +1,15 @@
 """
-Compute & cache the soft-pipeline score matrix (n_docs x n_queries) for a split.
+Compute & cache the weighted-sum pipeline score matrix (n_docs x n_queries) for a split.
 
-Used as a feature by the v7 reranker. Also exposes `get_candidates`, the
+Used as a feature by the final reranker. Also exposes `get_candidates`, the
 hard-domain candidate selector (kept here to avoid a circular import with
-`models/hard_pipeline_with_cite.py`).
+`models/domain_retrieval_cite.py`).
 
 Cache path: data/soft_scores/soft_scores_{split}.npz
 
 Usage:
-    python scripts/compute_soft_scores.py --split train
-    python scripts/compute_soft_scores.py --split held_out
+    python scripts/compute_weighted_sum_scores.py --split train
+    python scripts/compute_weighted_sum_scores.py --split held_out
 """
 import argparse
 import json
@@ -23,7 +23,7 @@ import numpy as np
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 from helpers import load_corpus, load_queries
-from models.hard_pipeline_with_cite import mm
+from models.domain_retrieval_cite import mm
 
 DATA_DIR  = ROOT / "data"
 EMB_DIR   = DATA_DIR / "embeddings"
@@ -35,7 +35,7 @@ EMB_FT  = EMB_DIR / "data_finetuned_models_BAAI_bge-small-en-v1.5"
 EMB_BGE = EMB_DIR / "BAAI_bge-large-en-v1.5"
 EMB_E5  = EMB_DIR / "intfloat_e5-large-v2"
 
-PROGRESS = Path(__file__).parent / "compute_soft_scores_progress.txt"
+PROGRESS = Path(__file__).parent / "compute_weighted_sum_scores_progress.txt"
 
 
 def log(msg):
@@ -45,9 +45,9 @@ def log(msg):
 
 
 def compute_soft_scores(split="train"):
-    """Compute the soft pipeline's full score matrix (n_docs × n_queries).
+    """Compute the weighted-sum pipeline's full score matrix (n_docs × n_queries).
 
-    Returns aligned to the soft pipeline's corpus_ids order (the finetuned-bge
+    Returns aligned to the weighted-sum pipeline's corpus_ids order (the finetuned-bge
     ordering). Cached to disk.
     """
     cache = SOFT_DIR / f"soft_scores_{split}.npz"
@@ -55,7 +55,7 @@ def compute_soft_scores(split="train"):
         log(f"Loading soft scores from cache {cache}")
         d = np.load(cache, allow_pickle=True)
         return d["scores"], list(d["query_ids"]), list(d["corpus_ids"])
-    log(f"Computing soft pipeline scores for split={split}...")
+    log(f"Computing weighted-sum pipeline scores for split={split}...")
     t0 = time.time()
 
     ft_c = np.load(EMB_FT / "corpus_embeddings.npy").astype(np.float32)
@@ -111,7 +111,7 @@ def compute_soft_scores(split="train"):
     queries_df = load_queries(query_file)
     qdmap = dict(zip(queries_df["doc_id"], queries_df["domain"].fillna("")))
 
-    # Soft pipeline weights (same as models/pipeline.py)
+    # Weighted-sum pipeline weights (same as models/weighted_sum_pipeline.py)
     W_FT, W_BGE, W_BM25 = 0.5, 0.5, 0.35
     W_DOMAIN, W_POOL = 0.38, 0.15
     W_BC, W_EC, W_CC = 0.95, 0.35, 0.07
@@ -163,7 +163,7 @@ def get_candidates(d, dom_k=80, cand_n=100):
     """Hard-domain candidate selection for each query.
 
     `d` is the signals dict returned by
-    `models.hard_pipeline_with_cite.load_signals_plus_cite(split)`.
+    `models.domain_retrieval_cite.load_signals_plus_cite(split)`.
     Returns {query_id: np.array([corpus_idx, ...])}.
     """
     corpus_ids = d["corpus_ids"]; query_ids = d["query_ids"]

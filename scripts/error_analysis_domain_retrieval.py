@@ -18,8 +18,8 @@ from helpers import load_corpus, load_qrels, load_queries
 DATA_DIR = ROOT / "data"
 
 # Import the run function
-sys.path.insert(0, str(ROOT / "_claude"))
-from hard_pipeline_with_cite import run, eval_sub, load_signals_plus_cite, ndcg_at_10
+sys.path.insert(0, str(ROOT / "models"))
+from domain_retrieval_cite import run, eval_sub, load_signals_plus_cite, ndcg_at_10
 
 qrels = load_qrels(DATA_DIR / "qrels.json")
 

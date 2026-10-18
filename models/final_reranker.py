@@ -1,5 +1,5 @@
 """
-Reranker v7 : the final 4-feature reranker (train NDCG@10 = 0.7603).
+Final reranker: the final 4-feature reranker (train NDCG@10 = 0.7603).
 
 Given hard-domain candidates (top-100 from the 7-signal pipeline), re-score
 each candidate as:
@@ -16,9 +16,9 @@ Caches consumed (auto-built on the fly for held-out if missing):
     data/soft_scores/soft_scores_{split}.npz
 
 Usage:
-    python models/reranker_v7.py --split train
-    python models/reranker_v7.py --split train --grid      # re-run the 4-D grid search
-    python models/reranker_v7.py --split held_out          # produces the submission JSON
+    python models/final_reranker.py --split train
+    python models/final_reranker.py --split train --grid      # re-run the 4-D grid search
+    python models/final_reranker.py --split held_out          # produces the submission JSON
 """
 import argparse
 import json
@@ -30,14 +30,14 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from helpers import load_qrels, load_corpus, load_queries, evaluate, save_results
-from models.hard_pipeline_with_cite import load_signals_plus_cite, _fast_eval
-from scripts.compute_soft_scores import compute_soft_scores, get_candidates
+from models.domain_retrieval_cite import load_signals_plus_cite, _fast_eval
+from scripts.compute_weighted_sum_scores import compute_soft_scores, get_candidates
 
 DATA_DIR        = Path(__file__).parent.parent / "data"
 SUBMISSIONS_DIR = Path(__file__).parent.parent / "submissions"
 RESULTS_DIR     = Path(__file__).parent.parent / "results"
 CE_CACHE        = DATA_DIR / "ce_cache"
-PROGRESS        = Path(__file__).parent / "reranker_v7_progress.txt"
+PROGRESS        = Path(__file__).parent / "final_reranker_progress.txt"
 
 # Best config found by the 4-D grid search
 W_BC   = 0.44
@@ -140,7 +140,7 @@ def _build_ce_cache(split, per_query_cands, d, model_name="BAAI/bge-reranker-bas
 
 
 def _load_features(split, d, per_query_cands=None):
-    """Load CE + soft-pipeline features for a split, aligned to hard-pipeline ordering.
+    """Load CE + weighted-sum pipeline features for a split, aligned to domain-filtered pipeline ordering.
 
     If the CE cache is missing, build it on the fly (requires `per_query_cands`).
     """
@@ -255,7 +255,7 @@ def main():
         qdmap = dict(zip(d["query_ids"], d["query_domains"]))
         results = evaluate(submission, qrels, ks=[10], query_domains=qdmap, verbose=True)
         save_results(
-            results, RESULTS_DIR / "reranker_v7.csv",
+            results, RESULTS_DIR / "final_reranker.csv",
             hyperparameters={
                 "w_bc": w_bc, "w_ce": w_ce, "w_soft": w_soft, "rr_pow": rr_pow,
                 "dom_k": DOM_K, "cand_n": CAND_N, "top_k": args.top_k,
@@ -263,7 +263,7 @@ def main():
             },
         )
 
-    name = args.output or f"reranker_v7_{args.split}"
+    name = args.output or f"final_reranker_{args.split}"
     out_path = SUBMISSIONS_DIR / (name if name.endswith(".json") else f"{name}.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

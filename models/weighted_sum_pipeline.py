@@ -13,8 +13,8 @@ Signals combined in score space:
 (The actual fully detailed pipeline is on the presentation slides)
 
 Usage:
-    python models/pipeline.py --split train
-    python models/pipeline.py --split held_out --zip
+    python models/weighted_sum_pipeline.py --split train
+    python models/weighted_sum_pipeline.py --split held_out --zip
 """
 
 import argparse
@@ -186,7 +186,7 @@ def main():
         qrels = load_qrels(DATA_DIR / "qrels.json")
         results = evaluate(submission, qrels, ks=[10], query_domains=qdmap, verbose=True)
         save_results(
-            results, RESULTS_DIR / "pipeline.csv",
+            results, RESULTS_DIR / "weighted_sum_pipeline.csv",
             hyperparameters={
                 "w_ft": W_FT, "w_bge": W_BGE, "w_bm25": W_BM25,
                 "w_domain": W_DOMAIN, "w_pool": W_POOL,
@@ -195,7 +195,7 @@ def main():
             },
         )
 
-    name = args.output or f"pipeline_{args.split}"
+    name = args.output or f"weighted_sum_pipeline_{args.split}"
     out_path = SUBMISSIONS_DIR / (name if name.endswith(".json") else f"{name}.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

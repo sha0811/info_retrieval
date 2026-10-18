@@ -1,3 +1,15 @@
 data/
 reco.md
 test.md
+.DS_Store
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*_progress.txt
+
+# Only the submissions referenced in the README are versioned
+submissions/*
+!submissions/final_reranker_train.json
+!submissions/final_reranker_held_out.json
+!submissions/weighted_sum_pipeline_train.json
+!submissions/weighted_sum_pipeline_held_out.json

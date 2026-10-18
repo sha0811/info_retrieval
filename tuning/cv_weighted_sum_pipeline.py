@@ -5,7 +5,7 @@ Precomputes all signals (dense, BM25, cite, chunk), then sweeps a weight grid
 cheaply over those precomputed scores. Picks the best weights per fold and averages them
 to get params that generalize better than tuning on the full training set.
 
-Note: pipeline logic is duplicated inline here (it's basically a tuning script for models/pipeline.py).
+Note: pipeline logic is duplicated inline here (it's basically a tuning script for models/weighted_sum_pipeline.py).
 """
 import json, sys, numpy as np
 from pathlib import Path
@@ -212,10 +212,10 @@ print(f"Full train with best params (0.38,0.15,0.95,0.35,0.07): {best_s:.4f}")
 
 # Save results
 results = evaluate(sub_full, qrels, ks=[10], query_domains=qdmap, verbose=False)
-save_results(results, RESULTS_DIR / "pipeline.csv",
+save_results(results, RESULTS_DIR / "weighted_sum_pipeline.csv",
              hyperparameters={"w_domain": avg_params[0], "w_pool": avg_params[1],
                               "w_bc": avg_params[2], "w_ec": avg_params[3],
                               "w_cc": avg_params[4], "source": "cv5fast"})
-print(f"\nResults saved to results/pipeline.csv")
-print(f"To generate a submission with these weights, update the constants in models/pipeline.py and run:")
-print(f"  python models/pipeline.py --split held_out --zip")
+print(f"\nResults saved to results/weighted_sum_pipeline.csv")
+print(f"To generate a submission with these weights, update the constants in models/weighted_sum_pipeline.py and run:")
+print(f"  python models/weighted_sum_pipeline.py --split held_out --zip")
